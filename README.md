@@ -8,7 +8,7 @@ Render LaTeX math beautifully in terminal UIs with [ratatui](https://github.com/
 
 - LaTeX to Unicode terminal rendering
 - MathML intermediate format support
-- Native ratatui widget
+- Native ratatui widget (optional)
 - Unicode superscripts/subscripts when possible
 - 2D rendering for fractions, roots, big operators
 - Greek letters and mathematical symbols
@@ -19,6 +19,20 @@ Render LaTeX math beautifully in terminal UIs with [ratatui](https://github.com/
 [dependencies]
 tui-math = "0.1"
 ```
+
+The ratatui widgets are behind the default `widgets` feature and the demo
+binary behind `bin`.  The renderer itself needs no terminal library, so a
+crate that already holds its own ratatui version can take just that and keep
+one ratatui in its graph:
+
+```toml
+[dependencies]
+tui-math = { version = "0.1", default-features = false }
+```
+
+That build gives you `render_latex`, `render_mathml`, `MathRenderer` and
+`MathBox`, and pulls only `latex2mathml`, `roxmltree`, `once_cell` and the two
+unicode crates.
 
 ## Usage
 

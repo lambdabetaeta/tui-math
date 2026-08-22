@@ -8,14 +8,45 @@ repository = "https://github.com/decisiongraph/tui-math"
 keywords = ["math", "latex", "ratatui", "tui", "terminal"]
 categories = ["command-line-interface", "mathematics", "rendering"]
 
+[features]
+default = ["widgets", "bin"]
+# The ratatui widgets: `MathWidget`, `StatefulMathWidget`, `CanvasMathWidget`.
+widgets = ["dep:ratatui"]
+# The `tui-math` demo binary, which drives a terminal of its own.
+bin = ["widgets", "dep:crossterm"]
+
 [dependencies]
 latex2mathml = "0.2"
 roxmltree = "0.20"
 once_cell = "1.19"
-ratatui = "0.29"
-crossterm = "0.28"
+ratatui = { version = "0.29", optional = true }
+crossterm = { version = "0.28", optional = true }
 unicode-width = "0.2"
 unicode-segmentation = "1.11"
 
 [dev-dependencies]
 color-eyre = "0.6"
+
+[[bin]]
+name = "tui-math"
+required-features = ["bin"]
+
+[[example]]
+name = "canvas_equation"
+required-features = ["widgets"]
+
+[[example]]
+name = "debug_canvas2"
+required-features = ["widgets"]
+
+[[example]]
+name = "render_to_text"
+required-features = ["widgets"]
+
+[[example]]
+name = "single_equation"
+required-features = ["widgets"]
+
+[[example]]
+name = "test_lim"
+required-features = ["widgets"]
