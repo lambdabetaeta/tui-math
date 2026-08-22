@@ -8,7 +8,7 @@ Render LaTeX math beautifully in terminal UIs with [ratatui](https://github.com/
 
 - LaTeX to Unicode terminal rendering
 - MathML intermediate format support
-- Native ratatui widget (optional)
+- Native ratatui widget (optional: ratatui 0.30)
 - Unicode superscripts/subscripts when possible
 - 2D rendering for fractions, roots, big operators
 - Greek letters and mathematical symbols
