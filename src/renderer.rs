@@ -26,6 +26,9 @@ impl fmt::Display for RenderError {
 
 impl std::error::Error for RenderError {}
 
+/// The marker latex2mathml plants in place of a command it cannot parse.
+const PARSE_MARKER: &str = "[PARSE ERROR:";
+
 /// Math renderer that converts LaTeX/MathML to Unicode terminal output
 pub struct MathRenderer {
     use_unicode_scripts: bool,
@@ -208,6 +211,16 @@ impl MathRenderer {
 
     fn process_text(&self, node: &Node) -> Result<MathBox, RenderError> {
         let text = self.get_text_content(node);
+
+        // latex2mathml reports a command it does not know by planting a marker
+        // in an <mtext> node rather than failing, so the formula arrives part
+        // typeset and part apology.  Typesetting the apology would hand the
+        // caller a rendering it cannot tell from real notation.
+        if let Some(rest) = text.trim().strip_prefix(PARSE_MARKER) {
+            return Err(RenderError::LatexConversion(
+                rest.trim_end_matches(']').trim().to_string(),
+            ));
+        }
 
         // Handle Greek letters and special identifiers
         if let Some(greek) = get_greek(&text) {
@@ -722,6 +735,24 @@ mod tests {
         let result = renderer.render_latex("x^2").unwrap();
         // Should contain Unicode superscript
         assert!(result.contains('²') || result.contains('2'));
+    }
+
+    /// An unsupported command is an error, not something to typeset: the caller
+    /// must be able to tell a rendering from an apology.
+    #[test]
+    fn test_unsupported_command_is_an_error() {
+        let renderer = MathRenderer::new();
+        let err = renderer
+            .render_latex(r"x \nosuchcmd y")
+            .expect_err("unsupported command");
+        assert!(
+            matches!(err, RenderError::LatexConversion(_)),
+            "reported as a conversion failure: {err:?}"
+        );
+        assert!(
+            !err.to_string().contains("PARSE ERROR"),
+            "the marker is unwrapped, not passed through: {err}"
+        );
     }
 
     #[test]
