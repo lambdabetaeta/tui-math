@@ -4,7 +4,7 @@ version = "0.1.1"
 edition = "2021"
 description = "Render LaTeX math beautifully in terminal UIs with ratatui"
 license = "MIT"
-repository = "https://github.com/onnimonni/tui-math"
+repository = "https://github.com/decisiongraph/tui-math"
 keywords = ["math", "latex", "ratatui", "tui", "terminal"]
 categories = ["command-line-interface", "mathematics", "rendering"]
 
